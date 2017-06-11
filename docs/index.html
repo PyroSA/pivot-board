@@ -22,38 +22,135 @@
     <div id="app">
       <section class="serverapp">
         <header class="header">
-          <h1>Pivotal Board
-            <button class="btn" v-show="connected"
-              :class="{ 'btn-primary': connected, 'btn-secondary': !connected }"
-              type="button"
-              @click="disconnect()">
-                Disconnect
-            </button>
-          </h1>
-          <div class='row' v-show="!connected">
-            <div class='col-sm-3'>
-              <label>
-                <span>Pivotal API Key</span>
-                <input class="new-server"
-                  autofocus autocomplete="off"
-                  placeholder="Pivotal API Token"
-                  v-model="config.pivotToken"
-                  @keyup.enter="setToken">
-              </label>
-            </div>
-            <div class='col-sm-3'>
-              <button class="btn"
-                :class="{ 'btn-primary': connected, 'btn-secondary': !connected }"
+          <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+            <h1 class="navbar-brand">Pivotal Board</h1>
+
+            <ul class="nav nav-pills" v-show="projects">
+              <li class="nav-item" v-for="(project, index) in projects" :key="project.id">
+                <a class="nav-link" :class="{ active: project == selectedProject }" href="#" @click="selectProject(project)">{{project.name}}</a>
+              </li>
+            </ul>
+
+            <input class="form-control" v-show="!connected"
+              autofocus autocomplete="off"
+              placeholder="Pivotal API Token"
+              v-model="config.pivotToken"
+              @keyup.enter="setToken"
+            >
+
+            <div class="ml-auto justify-content-end">
+              <button class="btn btn-primary" v-show="!connected"
                 type="button"
                 @click="connect()">
                   Connect
               </button>
+
+              <button class="btn btn-secondary" v-show="connected"
+                type="button"
+                @click="disconnect()">
+                  Disconnect
+              </button>
             </div>
-            <div class='col-sm-6'>
+          </nav>
+        </header>
+
+        <main v-cloak>
+          <div class='row' v-show="!connected">
+            <div class='col-sm-12'>
               <a href="https://www.pivotaltracker.com/profile">Get your API Token from your PivotalTracker Profile page</a>
             </div>
           </div>
-        </header>
+          <div class="alert alert-danger" role="alert" v-show="error.possible_fix">
+            <strong>{{ error.error}}</strong> {{ error.possible_fix}}
+          </div>
+          <div class="alert alert-danger" role="alert" v-show="error.message">
+            <strong>{{ error.name }}</strong> {{ error.message }}
+          </div>
+
+          <div v-show="stories">
+            <h1>Stories</h1>
+            <div class="row">
+              <div class="col-sm-3">
+                <h2>Current</h2>
+                <div class="card" v-for="(story, index) in stories" :key="story.id"
+                  v-if="['planned', 'rejected'].includes(story.current_state)"
+                  :class="{
+                    'card-outline-danger': story.current_state == 'rejected',
+                    'card-outline-primary': story.current_state == 'planned'
+                  }"
+                  >
+                  <div class="card-block">
+                    <h4 class="card-title">{{story.story_type}}
+                      <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                      <a :href="story.url">{{story.id}}</a>
+                    </h4>
+                    <p class="card-text">{{story.name}}</p>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <h2>Dev</h2>
+                <div class="card" v-for="(story, index) in stories" :key="story.id"
+                  v-if="['started', 'finished'].includes(story.current_state)"
+                  :class="{
+                    'card-outline-primary': story.current_state == 'started',
+                    'card-outline-warning': story.current_state == 'finished',
+                  }"
+                  >
+                  <div class="card-block">
+                    <h4 class="card-title">{{story.story_type}}
+                      <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                      <a :href="story.url">{{story.id}}</a>
+                    </h4>
+                    <p class="card-text">{{story.name}}</p>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <h2>QA</h2>
+                <div class="card" v-for="(story, index) in stories" :key="story.id"
+                  v-if="['delivered'].includes(story.current_state)"
+                  :class="{
+                    'card-outline-primary': story.current_state == 'delivered'
+                  }"
+                  >
+                  <div class="card-block">
+                    <h4 class="card-title">{{story.story_type}}
+                      <span class="badge badge-info" v-show="story.estimate">{{story.estimate}}</span>
+                      <a :href="story.url">{{story.id}}</a>
+                    </h4>
+                    <p class="card-text">{{story.name}}</p>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <h2>Accepted</h2>
+                <div class="card" v-for="(story, index) in stories" :key="story.id"
+                  v-if="['accepted'].includes(story.current_state)"
+                  :class="{
+                    'card-outline-success': story.current_state == 'accepted'
+                  }"
+                  >
+                  <div class="card-block">
+                    <h4 class="card-title">{{story.story_type}}
+                      <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                      <a :href="story.url">{{story.id}}</a>
+                    </h4>
+                    <p class="card-text">{{story.name}}</p>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <footer class="footer" v-cloak>
+          <span>Footer</span>
+        </footer>
       </section>
     </div>
     <div class="ct-chart ct-perfect-fourth"></div>
