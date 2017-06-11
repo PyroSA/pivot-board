@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Pivotal Board</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+
+    <link rel="stylesheet" href="style.css">
+    <script src="bundle.js" defer></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <section class="serverapp">
+        <header class="header">
+          <h1>Pivotal Board
+            <button class="btn" v-show="connected"
+              :class="{ 'btn-primary': connected, 'btn-secondary': !connected }"
+              type="button"
+              @click="disconnect()">
+                Disconnect
+            </button>
+          </h1>
+          <div class='row' v-show="!connected">
+            <div class='col-sm-3'>
+              <label>
+                <span>Pivotal API Key</span>
+                <input class="new-server"
+                  autofocus autocomplete="off"
+                  placeholder="Pivotal API Token"
+                  v-model="config.pivotToken"
+                  @keyup.enter="setToken">
+              </label>
+            </div>
+            <div class='col-sm-3'>
+              <button class="btn"
+                :class="{ 'btn-primary': connected, 'btn-secondary': !connected }"
+                type="button"
+                @click="connect()">
+                  Connect
+              </button>
+            </div>
+            <div class='col-sm-6'>
+              <a href="https://www.pivotaltracker.com/profile">Get your API Token from your PivotalTracker Profile page</a>
+            </div>
+          </div>
+        </header>
+      </section>
+    </div>
+    <div class="ct-chart ct-perfect-fourth"></div>
+  </body>
+</html>

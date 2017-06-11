@@ -1,0 +1,36 @@
+{
+  "name": "pivot-board",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./live-server",
+    "client": "./node_modules/.bin/browserify.cmd src/main.js -o docs/bundle.js",
+    "watch": "./node_modules/.bin/watchify.cmd src/main.js -o docs/bundle.js"
+  },
+  "author": "Werner Ackermann",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bluebird": "*",
+    "chartist": "*",
+    "glob": "*",
+    "live-server": "^1.2.0",
+    "lodash": "*",
+    "pivotaljs": "*",
+    "vue": "*"
+  },
+  "browser": {
+    "vue": "vue/dist/vue.common"
+  },
+  "devDependencies": {
+    "browserify": "*",
+    "eslint": "*",
+    "eslint-config-standard": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-node": "*",
+    "eslint-plugin-promise": "*",
+    "eslint-plugin-standard": "*",
+    "watchify": "^3.9.0"
+  }
+}
