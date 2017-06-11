@@ -35,13 +35,13 @@
               autofocus autocomplete="off"
               placeholder="Pivotal API Token"
               v-model="config.pivotToken"
-              @keyup.enter="setToken"
+              @keyup.enter="setToken()"
             >
 
             <div class="ml-auto justify-content-end">
               <button class="btn btn-primary" v-show="!connected"
                 type="button"
-                @click="connect()">
+                @click="setToken()">
                   Connect
               </button>
 
