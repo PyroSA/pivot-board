@@ -108,7 +108,7 @@ var app = function () {
         this.selectProject(undefined);
       },
       selectIteration: function (iteration) {
-        console.log(iteration);
+        console.log('Iteration', iteration);
         if (iteration) {
           this.stories = iteration.stories;
 
@@ -142,7 +142,6 @@ var app = function () {
         }
         this.error = {};
         this.connected = true;
-        console.log('connecting');
         this.pivotal = new Pivotal(this.config.pivotToken);
         this.pivotal.getProjects((err, projects) => {
           if (err || projects.error) {
