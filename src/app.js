@@ -61,6 +61,26 @@ var app = function () {
     computed: {
       monitoring: function () {
         return this.config.connect;
+      },
+      todoStories: function () {
+        return this.stories.filter(function (story) {
+          return ['planned', 'rejected'].includes(story.current_state);
+        });
+      },
+      devStories: function () {
+        return this.stories.filter(function (story) {
+          return ['started', 'finished'].includes(story.current_state);
+        });
+      },
+      qaStories: function () {
+        return this.stories.filter(function (story) {
+          return ['delivered'].includes(story.current_state);
+        });
+      },
+      doneStories: function () {
+        return this.stories.filter(function (story) {
+          return ['accepted'].includes(story.current_state);
+        });
       }
     },
 
@@ -69,6 +89,17 @@ var app = function () {
         configStorage.save(this.config);
 
         this.connect();
+      },
+      cardStyle: function (story) {
+        switch (story.current_state) {
+          case 'planned': return 'card-outline-primary';
+          case 'rejected': return 'card-outline-danger';
+          case 'started': return 'card-outline-primary';
+          case 'finished': return 'card-outline-warning';
+          case 'delivered': return 'card-outline-primary';
+          case 'accepted': return 'card-outline-success';
+          default: return 'card-outline-secondary';
+        }
       },
       disconnect: function () {
         this.connected = false;

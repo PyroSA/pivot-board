@@ -71,14 +71,8 @@
             <h1>Stories</h1>
             <div class="row">
               <div class="col-sm-3">
-                <h2>Current</h2>
-                <div class="card" v-for="(story, index) in stories" :key="story.id"
-                  v-if="['planned', 'rejected'].includes(story.current_state)"
-                  :class="{
-                    'card-outline-danger': story.current_state == 'rejected',
-                    'card-outline-primary': story.current_state == 'planned'
-                  }"
-                  >
+                <h2>Todo</h2>
+                <div class="card" v-for="(story, index) in todoStories" :key="story.id" :class="cardStyle(story)">
                   <div class="card-block">
                     <h4 class="card-title">{{story.story_type}}
                       <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
@@ -91,13 +85,7 @@
               </div>
               <div class="col-sm-3">
                 <h2>Dev</h2>
-                <div class="card" v-for="(story, index) in stories" :key="story.id"
-                  v-if="['started', 'finished'].includes(story.current_state)"
-                  :class="{
-                    'card-outline-primary': story.current_state == 'started',
-                    'card-outline-warning': story.current_state == 'finished',
-                  }"
-                  >
+                <div class="card" v-for="(story, index) in devStories" :key="story.id" :class="cardStyle(story)">
                   <div class="card-block">
                     <h4 class="card-title">{{story.story_type}}
                       <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
@@ -110,12 +98,7 @@
               </div>
               <div class="col-sm-3">
                 <h2>QA</h2>
-                <div class="card" v-for="(story, index) in stories" :key="story.id"
-                  v-if="['delivered'].includes(story.current_state)"
-                  :class="{
-                    'card-outline-primary': story.current_state == 'delivered'
-                  }"
-                  >
+                <div class="card" v-for="(story, index) in qaStories" :key="story.id" :class="cardStyle(story)">
                   <div class="card-block">
                     <h4 class="card-title">{{story.story_type}}
                       <span class="badge badge-info" v-show="story.estimate">{{story.estimate}}</span>
@@ -127,13 +110,8 @@
                 </div>
               </div>
               <div class="col-sm-3">
-                <h2>Accepted</h2>
-                <div class="card" v-for="(story, index) in stories" :key="story.id"
-                  v-if="['accepted'].includes(story.current_state)"
-                  :class="{
-                    'card-outline-success': story.current_state == 'accepted'
-                  }"
-                  >
+                <h2>Done</h2>
+                <div class="card" v-for="(story, index) in doneStories" :key="story.id" :class="cardStyle(story)">
                   <div class="card-block">
                     <h4 class="card-title">{{story.story_type}}
                       <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
