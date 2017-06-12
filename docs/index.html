@@ -13,13 +13,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
     <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 
-
     <link rel="stylesheet" href="style.css">
     <script src="bundle.js" defer></script>
   </head>
 
   <body>
-    <div id="app">
+    <div id="app" v-cloak>
       <section class="serverapp">
         <header class="header">
           <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
@@ -54,7 +53,7 @@
           </nav>
         </header>
 
-        <main v-cloak>
+        <main>
           <div class='row' v-show="!connected">
             <div class='col-sm-12'>
               <a href="https://www.pivotaltracker.com/profile">Get your API Token from your PivotalTracker Profile page</a>
@@ -126,7 +125,7 @@
           </div>
         </main>
 
-        <footer class="footer" v-cloak>
+        <footer class="footer">
           <span>Footer</span>
         </footer>
       </section>

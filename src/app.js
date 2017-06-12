@@ -63,22 +63,22 @@ var app = function () {
         return this.config.connect;
       },
       todoStories: function () {
-        return this.stories.filter(function (story) {
+        return (this.stories || []).filter(function (story) {
           return ['planned', 'rejected'].includes(story.current_state);
         });
       },
       devStories: function () {
-        return this.stories.filter(function (story) {
+        return (this.stories || []).filter(function (story) {
           return ['started', 'finished'].includes(story.current_state);
         });
       },
       qaStories: function () {
-        return this.stories.filter(function (story) {
+        return (this.stories || []).filter(function (story) {
           return ['delivered'].includes(story.current_state);
         });
       },
       doneStories: function () {
-        return this.stories.filter(function (story) {
+        return (this.stories || []).filter(function (story) {
           return ['accepted'].includes(story.current_state);
         });
       }
@@ -136,6 +136,10 @@ var app = function () {
         }
       },
       connect: function () {
+        if (!this.config.pivotToken) {
+          this.disconnect();
+          return;
+        }
         this.error = {};
         this.connected = true;
         console.log('connecting');
