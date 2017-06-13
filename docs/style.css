@@ -62,3 +62,7 @@
   transform: scale(1.1);
 }
 [v-cloak] { display:none; }
+
+.card {
+  margin: 0.2em
+}
