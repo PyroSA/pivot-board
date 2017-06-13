@@ -1,34 +1,58 @@
 const Vue = require('vue');
-const Promise = require('bluebird');
+// const Promise = require('bluebird');
 const Pivotal = require('pivotaljs');
+const moment = require('moment');
 
 const CONFIG_STORAGE_KEY = 'pivot-board';
 const ConfigStorage = require('./lib/configStorage');
 const configStorage = new ConfigStorage(CONFIG_STORAGE_KEY);
 
-const CHECK_FREQUENCY = 30000;
-const CHECK_SEPERATION = 1000;
-
 const mainChart = new window.Chartist.Line('.ct-chart', { labels: ['new'], series: [[0, 30, 60, 90, 0, 100]] });
 
-const updateGraphs = (servers, graphs, element = 'rtt') => {
+const buildIterationGraph = (iteration) => {
+  const dailyPoints = {
+    labels: [],
+    created: [],
+    updated: [],
+    accepted: [],
+    burn: []
+  };
+
+  let day;
+
+  for (day = iteration.start; day <= iteration.finish; day += 86400000) {
+    dailyPoints.labels.push(moment(day).format('D MMM'));
+    dailyPoints.created.push(iteration.stories.reduce((acc, story) => {
+      return story.created_at <= day ? acc + (story.estimate || 0) : acc;
+    }, 0));
+    dailyPoints.updated.push(iteration.stories.reduce((acc, story) => {
+      return story.updated_at <= day ? acc + (story.estimate || 0) : acc;
+    }, 0));
+    dailyPoints.accepted.push(iteration.stories.reduce((acc, story) => {
+      return story.accepted_at <= day ? acc + (story.estimate || 0) : acc;
+    }, 0));
+  }
+
+  let days = -1;
+  for (day = iteration.finish; day >= iteration.start; day -= 86400000) {
+    const weekday = moment(day).weekday();
+    if (weekday > 0 && weekday < 6) {
+      days++;
+    }
+    dailyPoints.burn.unshift(days < 0 ? 0 : days);
+  }
+
+  const totalDaysDiv = 1 / dailyPoints.burn[0];
+  for (day = 0; day < dailyPoints.burn.length; day++) {
+    console.log(day, dailyPoints.burn[day]);
+    dailyPoints.burn[day] = dailyPoints.created[day] * dailyPoints.burn[day] * totalDaysDiv;
+  }
+
   const data = {
-    labels: servers.map((server) => server.name),
-    series: graphs.map((graph) => graph[element])
+    labels: dailyPoints.labels,
+    series: [ dailyPoints.created, dailyPoints.updated, dailyPoints.accepted, dailyPoints.burn ]
   };
   mainChart.update(data);
-};
-
-const inhumanize = (input) => {
-  return input.toString().replace('GB', 'e9').replace('MB', 'e6').replace('MB', 'e3');
-};
-
-const calculateGraphs = (responses, graph) => {
-  graph.rtt = responses.map((response) => response.rtt);
-  graph.cpu = responses.map((response) => response.os.load['1m']);
-  graph.memFree = responses.map((response) => inhumanize(response.os.mem.free));
-  graph.memRss = responses.map((response) => inhumanize(response.process.mem.rss));
-  graph.memProc = responses.map((response) => inhumanize(response.process.mem.used));
 };
 
 var app = function () {
@@ -111,6 +135,8 @@ var app = function () {
         console.log('Iteration', iteration);
         if (iteration) {
           this.stories = iteration.stories;
+
+          buildIterationGraph(iteration);
 
           const storyCount = {};
           this.stories.forEach(function (story) {

@@ -17,6 +17,7 @@
     "glob": "*",
     "live-server": "^1.2.0",
     "lodash": "*",
+    "moment": "^2.18.1",
     "pivotaljs": "*",
     "vue": "*"
   },
