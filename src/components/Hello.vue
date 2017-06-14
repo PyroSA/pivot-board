@@ -55,7 +55,6 @@
               <h2>Todo</h2>
               <div class="card" v-for="(story, index) in todoStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
-                  <i class="fa fa-envelope fa-5x fa-border icon-grey badge">5</i>
                   <h4 class="card-title">{{story.story_type}}
                     <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
                     <a :href="story.url">{{story.id}}</a>
