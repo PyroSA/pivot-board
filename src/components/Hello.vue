@@ -51,53 +51,61 @@
         <div v-show="stories">
           <h1>Stories</h1>
           <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-3 small-pad col-border">
               <h2>Todo</h2>
               <div class="card" v-for="(story, index) in todoStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
-                  <h4 class="card-title">{{story.story_type}}
-                    <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <a :href="story.url">{{story.id}}</a>
-                  </h4>
+                  <div class="card-title">
+                    <a class="left" :href="story.url">{{story.id}}</a>
+                    <span :class="cardGlyph(story)"></span>
+                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
+                  </div>
                   <p class="card-text">{{story.name}}</p>
                   <div></div>
                 </div>
               </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 small-pad col-border">
               <h2>Dev</h2>
               <div class="card" v-for="(story, index) in devStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
-                  <h4 class="card-title">{{story.story_type}}
-                    <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <a :href="story.url">{{story.id}}</a>
-                  </h4>
+                  <div class="card-title">
+                    <a class="left" :href="story.url">{{story.id}}</a>
+                    <span :class="cardGlyph(story)"></span>
+                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
+                  </div>
                   <p class="card-text">{{story.name}}</p>
                   <div></div>
                 </div>
               </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 small-pad col-border">
               <h2>QA</h2>
               <div class="card" v-for="(story, index) in qaStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
-                  <h4 class="card-title">{{story.story_type}}
-                    <span class="badge badge-info" v-show="story.estimate">{{story.estimate}}</span>
-                    <a :href="story.url">{{story.id}}</a>
-                  </h4>
+                  <div class="card-title">
+                    <a class="left" :href="story.url">{{story.id}}</a>
+                    <span :class="cardGlyph(story)"></span>
+                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
+                  </div>
                   <p class="card-text">{{story.name}}</p>
                   <div></div>
                 </div>
               </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 small-pad col-border">
               <h2>Done</h2>
               <div class="card" v-for="(story, index) in doneStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
-                  <h4 class="card-title">{{story.story_type}}
-                    <span class="badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <a :href="story.url">{{story.id}}</a>
-                  </h4>
+                  <div class="card-title">
+                    <a class="left" :href="story.url">{{story.id}}</a>
+                    <span :class="cardGlyph(story)"></span>
+                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
+                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
+                  </div>
                   <p class="card-text">{{story.name}}</p>
                   <div></div>
                 </div>
@@ -123,7 +131,14 @@ import _ from 'lodash';
 const CONFIG_STORAGE_KEY = 'pivot-board';
 const configStorage = new ConfigStorage(CONFIG_STORAGE_KEY);
 
-const mainChart = new window.Chartist.Line('.ct-chart', { labels: ['new'], series: [[0, 30, 60, 90, 0, 100]] });
+const mainChart = new window.Chartist.Line('.ct-chart', {
+  labels: ['new'],
+  series: [[0, 30, 60, 90, 0, 100]]
+}, {
+  axisY: {
+    onlyInteger: true
+  }
+});
 
 const buildIterationGraph = (iteration) => {
   const dailyPoints = {
@@ -236,6 +251,15 @@ export default {
         default: return 'card-outline-secondary';
       }
     },
+    cardGlyph: function (story) {
+      switch (story.story_type) {
+        case 'bug': return 'fa fa-bug';
+        case 'chore': return 'fa fa-cog';
+        case 'feature': return 'fa fa-star';
+        case 'release': return 'fa fa-flag-checkered';
+        default: return 'fa fa-question';
+      }
+    },
     disconnect: function () {
       this.connected = false;
       this.projects = undefined;
@@ -263,28 +287,7 @@ export default {
       this.selectedProject = project;
       this.selectIteration(undefined);
       if (project) {
-        // this.pivotal.getCurrentIterations(project.id, (err, iterations) => {
-        //   console.log('cb');
-        //   if (err) {
-        //     console.error('selectedProject', err);
-        //     return;
-        //   }
-        //   const all = {
-        //     start: iterations[0].start,
-        //     finish: iterations[0].finish,
-        //     stories: []
-        //   };
-        //   iterations.forEach(function (iteration) {
-        //     console.log(all);
-        //     console.log(iteration);
-        //     all.start = Math.min(all.start, iteration.start);
-        //     all.finish = Math.max(all.finish, iteration.finish);
-        //     all.stories = all.stories.concat(iteration.stories);
-        //   });
-        //   this.selectIteration(all);
-        // });
-
-        this.pivotal.getIterations(project.id, { scope: 'done_current', date_format: 'millis', offset: -3 }, (iterations) => {
+        this.pivotal.getIterations(project.id, { scope: 'done_current', date_format: 'millis', offset: 0 }, (iterations) => {
           console.log('comp', iterations);
           if (_.isError(iterations)) {
             console.error('selectedProject', iterations);
@@ -330,7 +333,7 @@ export default {
     }
   },
   mounted () {
-    this.disconnect();
+    this.connect();
   }
 };
 </script>
@@ -353,5 +356,40 @@ li {
 
 a {
   color: #42b983;
+}
+
+.card {
+  margin: 0.2rem
+}
+
+.card-block {
+  padding: 0.5rem
+}
+
+.left {
+  float: left
+}
+
+.right {
+  float: right
+}
+
+.card-title {
+  width: 100%;
+  margin-bottom: 0;
+  line-height: 1.0
+}
+
+.card-text {
+  margin-bottom: 0
+}
+
+.small-pad {
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+}
+
+.col-border {
+  border: 1px solid #EEEEEE
 }
 </style>
