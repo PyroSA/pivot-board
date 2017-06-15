@@ -50,8 +50,8 @@
 
         <div v-show="stories">
           <h1>Stories</h1>
-          <div class="row">
-            <div class="col-sm-3 small-pad col-border">
+          <div class="scrum-board">
+            <div class="scrum-column">
               <h2>Todo</h2>
               <div class="card" v-for="(story, index) in todoStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
@@ -66,7 +66,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-3 small-pad col-border">
+            <div class="scrum-column">
               <h2>Dev</h2>
               <div class="card" v-for="(story, index) in devStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
@@ -81,7 +81,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-3 small-pad col-border">
+            <div class="scrum-column">
               <h2>QA</h2>
               <div class="card" v-for="(story, index) in qaStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
@@ -96,7 +96,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-3 small-pad col-border">
+            <div class="scrum-column">
               <h2>Done</h2>
               <div class="card" v-for="(story, index) in doneStories" :key="story.id" :class="cardStyle(story)">
                 <div class="card-block">
@@ -390,6 +390,32 @@ a {
 }
 
 .col-border {
+  border: 1px solid #EEEEEE
+}
+
+.scrum-board {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: 0;
+  margin-left: 0;
+  box-sizing: inherit;
+}
+
+.scrum-column {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 25%;
+  -ms-flex: 0 0 25%;
+  flex: 0 0 25%;
+  max-width: 25%;
+  box-sizing: inherit;
   border: 1px solid #EEEEEE
 }
 </style>
