@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="main">
     <div v-show="false">Loading...</div>
     <section class="serverapp" v-cloak>
       <header class="header">
@@ -198,7 +198,7 @@ const buildIterationGraph = (iteration) => {
 };
 
 export default {
-  name: 'hello',
+  name: 'main',
   data () {
     return {
       config: configStorage.load(),
