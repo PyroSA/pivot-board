@@ -4,7 +4,18 @@
     <section class="serverapp" v-cloak>
       <header class="header">
         <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
-          <h1 class="navbar-brand">Pivotal Board</h1>
+          <a class="navbar-brand">Pivotal Board</a>
+
+          <form class="form-inline" v-show="projects">
+            <div class="input-group" v-show="projects">
+              <span class="input-group-addon">Show</span>
+              <input
+                class="form-control-inline" style="text-align:center"
+                type="number" v-model="iterationCount"
+                min=1 max=9>
+              <span class="input-group-addon">Iterations</span>
+            </div>
+          </form>
 
           <ul class="nav nav-pills" v-show="projects">
             <li class="nav-item" v-for="(project, index) in projects" :key="project.id">
@@ -48,29 +59,35 @@
           <strong>{{ error.name }}</strong> {{ error.message }}
         </div>
 
-        <div v-show="stories">
+        <div >
           <h1>Stories</h1>
-          <div class="scrum-board">
-            <div class="scrum-column">
-              <h2>Todo</h2>
-              <story-card :story="story" v-for="(story, index) in todoStories" :key="story.id"></story-card>
+          <div>
+            <div class="left">
+              <div class="scrum-board" v-show="stories">
+                <div class="scrum-column">
+                  <h2>Todo</h2>
+                  <story-card :story="story" v-for="(story, index) in todoStories" :key="story.id"></story-card>
+                </div>
+                <div class="scrum-column">
+                  <h2>Dev</h2>
+                  <story-card :story="story" v-for="(story, index) in devStories" :key="story.id"></story-card>
+                </div>
+                <div class="scrum-column">
+                  <h2>QA</h2>
+                  <story-card :story="story" v-for="(story, index) in qaStories" :key="story.id"></story-card>
+                </div>
+                <div class="scrum-column">
+                  <h2>Done</h2>
+                  <story-card :story="story" v-for="(story, index) in doneStories" :key="story.id"></story-card>
+                </div>
+              </div>
             </div>
-            <div class="scrum-column">
-              <h2>Dev</h2>
-              <story-card :story="story" v-for="(story, index) in devStories" :key="story.id"></story-card>
-            </div>
-            <div class="scrum-column">
-              <h2>QA</h2>
-              <story-card :story="story" v-for="(story, index) in qaStories" :key="story.id"></story-card>
-            </div>
-            <div class="scrum-column">
-              <h2>Done</h2>
-              <story-card :story="story" v-for="(story, index) in doneStories" :key="story.id"></story-card>
+            <div class="right">
+              <div class="ct-chart ct-square"></div>
             </div>
           </div>
         </div>
       </main>
-      <div class="ct-chart ct-perfect-fifth"></div>
 
       <!--<footer class="footer">
         <span>Footer</span>
@@ -154,11 +171,17 @@ export default {
       connected: false,
       pivotal: undefined,
       error: '',
+      iterationCount: 1,
       mainChart: undefined,
       projects: undefined,
       stories: undefined,
       selectedProject: undefined
     };
+  },
+  watch: {
+    iterationCount: function () {
+      this.selectProject(this.selectedProject);
+    }
   },
   computed: {
     monitoring: function () {
@@ -211,23 +234,26 @@ export default {
       this.selectIteration(undefined);
       if (project) {
         console.log('Project', project);
-        this.pivotal.getIterations(project.id, { scope: 'done_current', date_format: 'millis', offset: 0 }, (iterations) => {
-          console.log('comp', iterations);
+        this.pivotal.getIterations(project.id, {
+          scope: 'done_current',
+          date_format: 'millis',
+          offset: 1 - this.iterationCount
+        }, (iterations) => {
           if (_.isError(iterations)) {
             console.error('selectedProject', iterations);
             return;
           }
-          const all = {
+          const summary = {
             start: iterations[0].start,
             finish: iterations[0].finish,
             stories: []
           };
           iterations.forEach(function (iteration) {
-            all.start = Math.min(all.start, iteration.start);
-            all.finish = Math.max(all.finish, iteration.finish);
-            all.stories = all.stories.concat(iteration.stories);
+            summary.start = Math.min(summary.start, iteration.start);
+            summary.finish = Math.max(summary.finish, iteration.finish);
+            summary.stories = summary.stories.concat(iteration.stories);
           });
-          this.selectIteration(all);
+          this.selectIteration(summary);
         });
       }
     },
@@ -255,6 +281,10 @@ export default {
     }
   },
   updated () {
+    const chartDom = document.querySelector('.ct-chart');
+    if (chartDom && chartDom.__chartist__) {
+      chartDom.__chartist__.update();
+    }
   },
   mounted () {
     console.log('mounted');
@@ -315,5 +345,17 @@ a {
   max-width: 25%;
   box-sizing: inherit;
   border: 1px solid #EEEEEE
+}
+
+.left {
+  position: absolute;
+  left: 0;
+  width: 80%;
+}
+
+.right {
+  position: fixed;
+  right: 0;
+  width: 20%
 }
 </style>
