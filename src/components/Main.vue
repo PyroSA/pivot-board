@@ -53,67 +53,24 @@
           <div class="scrum-board">
             <div class="scrum-column">
               <h2>Todo</h2>
-              <div class="card" v-for="(story, index) in todoStories" :key="story.id" :class="cardStyle(story)">
-                <div class="card-block">
-                  <div class="card-title">
-                    <a class="left" :href="story.url">{{story.id}}</a>
-                    <span :class="cardGlyph(story)"></span>
-                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
-                  </div>
-                  <p class="card-text">{{story.name}}</p>
-                  <div></div>
-                </div>
-              </div>
+              <story-card :story="story" v-for="(story, index) in todoStories" :key="story.id"></story-card>
             </div>
             <div class="scrum-column">
               <h2>Dev</h2>
-              <div class="card" v-for="(story, index) in devStories" :key="story.id" :class="cardStyle(story)">
-                <div class="card-block">
-                  <div class="card-title">
-                    <a class="left" :href="story.url">{{story.id}}</a>
-                    <span :class="cardGlyph(story)"></span>
-                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
-                  </div>
-                  <p class="card-text">{{story.name}}</p>
-                  <div></div>
-                </div>
-              </div>
+              <story-card :story="story" v-for="(story, index) in devStories" :key="story.id"></story-card>
             </div>
             <div class="scrum-column">
               <h2>QA</h2>
-              <div class="card" v-for="(story, index) in qaStories" :key="story.id" :class="cardStyle(story)">
-                <div class="card-block">
-                  <div class="card-title">
-                    <a class="left" :href="story.url">{{story.id}}</a>
-                    <span :class="cardGlyph(story)"></span>
-                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
-                  </div>
-                  <p class="card-text">{{story.name}}</p>
-                  <div></div>
-                </div>
-              </div>
+              <story-card :story="story" v-for="(story, index) in qaStories" :key="story.id"></story-card>
             </div>
             <div class="scrum-column">
               <h2>Done</h2>
-              <div class="card" v-for="(story, index) in doneStories" :key="story.id" :class="cardStyle(story)">
-                <div class="card-block">
-                  <div class="card-title">
-                    <a class="left" :href="story.url">{{story.id}}</a>
-                    <span :class="cardGlyph(story)"></span>
-                    <span class="right badge badge-primary" v-show="story.estimate">{{story.estimate}}</span>
-                    <span class="right badge badge-primary" v-show="!story.estimate">-</span>
-                  </div>
-                  <p class="card-text">{{story.name}}</p>
-                  <div></div>
-                </div>
-              </div>
+              <story-card :story="story" v-for="(story, index) in doneStories" :key="story.id"></story-card>
             </div>
           </div>
         </div>
       </main>
+      <div class="ct-chart ct-perfect-fifth"></div>
 
       <!--<footer class="footer">
         <span>Footer</span>
@@ -127,20 +84,12 @@ import Pivotal from '../lib/pivotalJs';
 import ConfigStorage from '../lib/configStorage';
 import moment from 'moment';
 import _ from 'lodash';
+import StoryCard from '@/components/StoryCard';
 
 const CONFIG_STORAGE_KEY = 'pivot-board';
 const configStorage = new ConfigStorage(CONFIG_STORAGE_KEY);
 
-const mainChart = new window.Chartist.Line('.ct-chart', {
-  labels: ['new'],
-  series: [[0, 30, 60, 90, 0, 100]]
-}, {
-  axisY: {
-    onlyInteger: true
-  }
-});
-
-const buildIterationGraph = (iteration) => {
+const buildIterationGraph = (chart, iteration) => {
   const dailyPoints = {
     labels: [],
     created: [],
@@ -180,7 +129,6 @@ const buildIterationGraph = (iteration) => {
 
   const totalDaysDiv = 1 / dailyPoints.burn[0];
   for (day = 0; day < dailyPoints.burn.length; day++) {
-    console.log(day, dailyPoints.burn[day]);
     dailyPoints.burn[day] = dailyPoints.created[day] * dailyPoints.burn[day] * totalDaysDiv;
   }
 
@@ -194,17 +142,19 @@ const buildIterationGraph = (iteration) => {
       dailyPoints.todo
     ]
   };
-  mainChart.update(data);
+  chart.update(data);
 };
 
 export default {
   name: 'main',
+  components: { 'story-card': StoryCard },
   data () {
     return {
       config: configStorage.load(),
       connected: false,
       pivotal: undefined,
       error: '',
+      mainChart: undefined,
       projects: undefined,
       stories: undefined,
       selectedProject: undefined
@@ -240,26 +190,6 @@ export default {
       configStorage.save(this.config);
       this.connect();
     },
-    cardStyle: function (story) {
-      switch (story.current_state) {
-        case 'planned': return 'card-outline-primary';
-        case 'rejected': return 'card-outline-danger';
-        case 'started': return 'card-outline-primary';
-        case 'finished': return 'card-outline-warning';
-        case 'delivered': return 'card-outline-primary';
-        case 'accepted': return 'card-outline-success';
-        default: return 'card-outline-secondary';
-      }
-    },
-    cardGlyph: function (story) {
-      switch (story.story_type) {
-        case 'bug': return 'fa fa-bug';
-        case 'chore': return 'fa fa-cog';
-        case 'feature': return 'fa fa-star';
-        case 'release': return 'fa fa-flag-checkered';
-        default: return 'fa fa-question';
-      }
-    },
     disconnect: function () {
       this.connected = false;
       this.projects = undefined;
@@ -267,26 +197,20 @@ export default {
       this.selectProject(undefined);
     },
     selectIteration: function (iteration) {
-      console.log('Iteration', iteration);
       if (iteration) {
+        console.log('Iteration', iteration);
         this.stories = iteration.stories;
 
-        buildIterationGraph(iteration);
-
-        const storyCount = {};
-        this.stories.forEach(function (story) {
-          storyCount[story.current_state] = (storyCount[story.current_state] || 0) + 1;
-        });
-        console.log(storyCount);
+        buildIterationGraph(this.mainChart, iteration);
       } else {
         this.stories = undefined;
       }
     },
     selectProject: function (project) {
-      console.log('Project', project);
       this.selectedProject = project;
       this.selectIteration(undefined);
       if (project) {
+        console.log('Project', project);
         this.pivotal.getIterations(project.id, { scope: 'done_current', date_format: 'millis', offset: 0 }, (iterations) => {
           console.log('comp', iterations);
           if (_.isError(iterations)) {
@@ -299,8 +223,6 @@ export default {
             stories: []
           };
           iterations.forEach(function (iteration) {
-            console.log(all);
-            console.log(iteration);
             all.start = Math.min(all.start, iteration.start);
             all.finish = Math.max(all.finish, iteration.finish);
             all.stories = all.stories.concat(iteration.stories);
@@ -332,8 +254,19 @@ export default {
       });
     }
   },
+  updated () {
+  },
   mounted () {
+    console.log('mounted');
     this.connect();
+    this.mainChart = new window.Chartist.Line('.ct-chart', {
+      labels: ['new'],
+      series: [[0, 30, 60, 90, 0, 100]]
+    }, {
+      axisY: {
+        onlyInteger: true
+      }
+    });
   }
 };
 </script>
@@ -356,41 +289,6 @@ li {
 
 a {
   color: #42b983;
-}
-
-.card {
-  margin: 0.2rem
-}
-
-.card-block {
-  padding: 0.5rem
-}
-
-.left {
-  float: left
-}
-
-.right {
-  float: right
-}
-
-.card-title {
-  width: 100%;
-  margin-bottom: 0;
-  line-height: 1.0
-}
-
-.card-text {
-  margin-bottom: 0
-}
-
-.small-pad {
-  padding-left: 0.2em;
-  padding-right: 0.2em;
-}
-
-.col-border {
-  border: 1px solid #EEEEEE
 }
 
 .scrum-board {

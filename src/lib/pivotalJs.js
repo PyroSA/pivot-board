@@ -318,7 +318,6 @@ Pivotal.prototype.paginated = function (path, offset, limit, options, callback, 
 
 Pivotal.prototype.api = function api (method, path, options, callback) {
   const xhr = new window.XMLHttpRequest();
-  console.log('API', method, path, options);
   if (options.qs) {
     xhr.open(method, `${this.baseUrl}${path}?${querystring.stringify(options.qs)}`);
   } else {
