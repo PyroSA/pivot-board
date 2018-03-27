@@ -64,19 +64,19 @@
           <div>
             <div class="left">
               <div class="scrum-board" v-show="stories">
-                <div class="scrum-column">
+                <div class="scrum-group">
                   <h2>Todo</h2>
                   <story-card :story="story" v-for="(story, index) in todoStories" :key="story.id"></story-card>
                 </div>
-                <div class="scrum-column">
+                <div class="scrum-group">
                   <h2>Dev</h2>
                   <story-card :story="story" v-for="(story, index) in devStories" :key="story.id"></story-card>
                 </div>
-                <div class="scrum-column">
+                <div class="scrum-group">
                   <h2>QA</h2>
                   <story-card :story="story" v-for="(story, index) in qaStories" :key="story.id"></story-card>
                 </div>
-                <div class="scrum-column">
+                <div class="scrum-group">
                   <h2>Done</h2>
                   <story-card :story="story" v-for="(story, index) in doneStories" :key="story.id"></story-card>
                 </div>
@@ -326,23 +326,23 @@ a {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
+  -webkit-flex-flow: row wrap;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
   margin-right: 0;
   margin-left: 0;
   box-sizing: inherit;
 }
 
-.scrum-column {
+.scrum-group {
   position: relative;
+  display: flex;
   width: 100%;
   min-height: 1px;
   -webkit-box-flex: 0;
-  -webkit-flex: 0 0 25%;
-  -ms-flex: 0 0 25%;
-  flex: 0 0 25%;
-  max-width: 25%;
+  -webkit-flex: 1 1 25%;
+  -ms-flex: 1 1 25%;
+  flex: 1 1 25%;
   box-sizing: inherit;
   border: 1px solid #EEEEEE
 }
@@ -357,5 +357,40 @@ a {
   position: fixed;
   right: 0;
   width: 20%
+}
+
+@media print {
+  h1 {
+    display: none
+  }
+
+  .scrum-board {
+    display: table;
+  }
+
+  .scrum-group {
+    display: table;
+    border: none;
+    min-width: 100%;
+  }
+  .scrum-group h2 {
+    flex: 1 1 100%
+  }
+  .left {
+    position: relative;
+    width: 100%;
+  }
+  .right {
+    display: none
+  }
+}
+
+@media screen {
+  .scrum-group {
+    -webkit-flex-flow: column wrap;
+    -ms-flex-flow: column wrap;
+    flex-flow: column wrap;
+    max-width: 25%;
+  }
 }
 </style>

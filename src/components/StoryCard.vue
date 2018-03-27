@@ -57,32 +57,48 @@ a {
 }
 
 .card {
-  margin: 0.2rem
+  display: block;
+  margin: 0.2rem;
+  page-break-inside: avoid;
+  min-height: 8em
 }
 
 .card-block {
-  padding: 0.5rem
+  padding: 0.5rem;
 }
 
 .card-title {
   width: 100%;
   margin-bottom: 0;
-  line-height: 1.0
+  line-height: 1.0;
 }
 
 .card-text {
-  margin-bottom: 0
+  margin-bottom: 0;
 }
 
 .col-border {
-  border: 1px solid #EEEEEE
+  border: 1px solid #EEEEEE;
 }
 
 .left {
-  float: left
+  float: left;
 }
 
 .right {
-  float: right
+  float: right;
 }
+
+@media print {
+  .card {
+    page-break-inside: avoid;
+    display: inline-table;
+    width: 24%;
+    max-width: 24%;
+  }
+  .card-text {
+    margin-top: 0.2rem;
+  }
+}
+
 </style>
