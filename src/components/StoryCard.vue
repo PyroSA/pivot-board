@@ -91,6 +91,9 @@ a {
 }
 
 @media print {
+  a {
+    text-decoration: none;
+  }
   .card {
     border-radius: 0%;
     border: 1px solid black;
