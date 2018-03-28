@@ -172,7 +172,7 @@ const buildIterationGraph = (chart, iteration) => {
 };
 
 export default {
-  name: 'main',
+  name: 'main-page',
   components: { 'story-card': StoryCard },
   data () {
     return {
@@ -230,7 +230,6 @@ export default {
     },
     selectIteration: function (iteration) {
       if (iteration) {
-        console.log('Iteration', iteration);
         this.stories = iteration.stories;
 
         buildIterationGraph(this.mainChart, iteration);
@@ -242,7 +241,6 @@ export default {
       this.selectedProject = project;
       this.selectIteration(undefined);
       if (project) {
-        console.log('Project', project);
         this.pivotal.getIterations(project.id, {
           scope: 'done_current',
           date_format: 'millis',
@@ -282,7 +280,6 @@ export default {
           return;
         }
         if (projects && projects.length > 0) {
-          console.log(projects);
           this.projects = projects;
           this.selectProject(projects[0]);
         }
@@ -296,7 +293,6 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted');
     this.connect();
     this.mainChart = new window.Chartist.Line('.ct-chart', {
       labels: ['new'],
