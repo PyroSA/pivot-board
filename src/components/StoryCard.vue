@@ -38,11 +38,11 @@ export default {
     },
     cardGlyph: function (story) {
       switch (story.story_type) {
-        case 'bug': return 'fa fa-bug';
-        case 'chore': return 'fa fa-cog';
-        case 'feature': return 'fa fa-star';
-        case 'release': return 'fa fa-flag-checkered';
-        default: return 'fa fa-question';
+        case 'bug': return 'fas fa-bug';
+        case 'chore': return 'fas fa-cog';
+        case 'feature': return 'fas fa-star';
+        case 'release': return 'fas fa-flag-checkered';
+        default: return 'fas fa-question';
       }
     }
   },
