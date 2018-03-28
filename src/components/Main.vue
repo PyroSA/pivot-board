@@ -372,6 +372,7 @@ a {
     display: table;
     border: none;
     min-width: 100%;
+    text-align: left
   }
   .scrum-group h2 {
     flex: 1 1 100%

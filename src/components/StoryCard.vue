@@ -64,6 +64,7 @@ a {
 }
 
 .card-block {
+  text-align: center;
   padding: 0.5rem;
 }
 
@@ -91,10 +92,13 @@ a {
 
 @media print {
   .card {
+    border-radius: 0%;
+    border: 1px solid black;
     page-break-inside: avoid;
     display: inline-table;
-    width: 24%;
-    max-width: 24%;
+    margin: 0.0rem;
+    width: 33%;
+    max-width: 33%;
   }
   .card-text {
     margin-top: 0.2rem;
