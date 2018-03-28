@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <div class="card-block">
+    <div class="card-body">
       <div class="card-title">
         <a class="left" :href="story.url">{{story.id}}</a>
         <span :class="cardGlyph(story)"></span>
@@ -63,7 +63,7 @@ a {
   min-height: 8em
 }
 
-.card-block {
+.card-body {
   text-align: center;
   padding: 0.5rem;
 }

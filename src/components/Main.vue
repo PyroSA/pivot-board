@@ -3,17 +3,21 @@
     <div v-show="false">Loading...</div>
     <section class="serverapp" v-cloak>
       <header class="header">
-        <nav class="navbar navbar-toggleable-sm navbar-light bg-faded">
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
           <a class="navbar-brand">Pivotal Board</a>
 
           <form class="form-inline" v-show="projects">
             <div class="input-group" v-show="projects">
-              <span class="input-group-addon">Show</span>
+              <div class="input-group-prepend">
+                <span class="input-group-text">Show</span>
+              </div>
               <input
-                class="form-control-inline" style="text-align:center"
+                class="form-control" style="text-align:center"
                 type="number" v-model="iterationCount"
                 min=1 max=9>
-              <span class="input-group-addon">Iterations</span>
+              <div class="input-group-append">
+                <span class="input-group-text">Iterations</span>
+              </div>
             </div>
           </form>
 
@@ -23,12 +27,17 @@
             </li>
           </ul>
 
-          <input class="form-control" v-show="!connected"
-            autofocus autocomplete="off"
-            placeholder="Pivotal API Token"
-            v-model="config.pivotToken"
-            @keyup.enter="setToken()"
-          >
+          <div class="input-group" v-show="!connected">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Pivotal API Token</span>
+            </div>
+            <input class="form-control"
+              autofocus autocomplete="off"
+              placeholder="Enter token here"
+              v-model="config.pivotToken"
+              @keyup.enter="setToken()"
+            >
+          </div>
 
           <div class="ml-auto justify-content-end">
             <button class="btn btn-primary" v-show="!connected"
@@ -37,7 +46,7 @@
                 Connect
             </button>
 
-            <button class="btn btn-secondary" v-show="connected"
+            <button class="btn btn-light" v-show="connected"
               type="button"
               @click="disconnect()">
                 Disconnect
